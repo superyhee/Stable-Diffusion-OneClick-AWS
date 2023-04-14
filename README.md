@@ -2,7 +2,7 @@
 
 **介绍：**
 
-通过Cloudformation在一键启动AWS G4 EC2实例(英伟达T4 GPU支持)，并使用Python Flask实现Stable Diffusion的Text2Image,Image2Image功能；
+通过Cloudformation在aws一键启动AWS G4 EC2实例(英伟达T4)，并使用Python Flask实现Stable Diffusion的Text2Image,Image2Image功能；
 
 **项目包含:**
 
@@ -53,7 +53,8 @@ bash
 aws cloudformation delete-stack --stack-name MyStack
 ```
 
-* 等待10几分钟，EC2会初始化环境和安装nvida驱动和diffusion lib
+* 等待15分钟左右，EC2会初始化环境和安装nvida驱动和diffusion lib
+* 通过控制台重启EC2
 * 通过ssh连接
 * 访问输出的地址，可以看见例子界面
 
@@ -68,7 +69,7 @@ from diffusers import DiffusionPipeline`
 `image.save("image_of_cat_playing_piano.png")`
 ```
 
-**样例程序说吗：**
+**样例程序说明：**
 
 app.py：
 为用户提供了两个功能：将文本转换成图像（Text-to-Image）和图像到图像风格迁移（Image-to-Image）
