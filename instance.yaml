@@ -80,7 +80,7 @@ Resources:
             VolumeSize: 100
             VolumeType: gp3
       "Tags" : [
-            {"Key" : "Name", "Value" : "sd-web-ui-cf"},
+            {"Key" : "Name", "Value" : "sd-one-clic"},
         ]
       KeyName: diffusion
       # SecurityGroupIds:
@@ -98,8 +98,10 @@ Resources:
             sudo apt update -y
             sudo apt upgrade -y
             sudo apt install nvidia-driver-525 -y
-            pip install --upgrade git+https://github.com/huggingface/diffusers.git transformers accelerate scipy
+            pip install --upgrade git+https://github.com/huggingface/diffusers.git transformers accelerate scipy safetensors xformers
             pip install flask-cors
+            git clone https://github.com/superyhee/Stable-Diffusion-OneClick-AWS.git
+            sudo shutdown -r +1
   MyEIP:
     Type: AWS::EC2::EIP
 

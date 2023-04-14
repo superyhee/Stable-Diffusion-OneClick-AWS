@@ -90,7 +90,7 @@ def health_check():
 @app.post("/txt2img")
 def text_to_img():
     data = request.json
-    model_id = "stabilityai/stable-diffusion-2"
+    model_id = "XpucT/Deliberate"
     output = "output_txt2img.png"
 
     scheduler = EulerDiscreteScheduler.from_pretrained(model_id, subfolder="scheduler")
