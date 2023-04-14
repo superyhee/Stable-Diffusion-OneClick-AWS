@@ -1,0 +1,138 @@
+Resources:
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      Tags:
+        - Key: Name
+          Value: "My VPC"
+
+  MyInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: "My IGW"
+
+  MyVPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref MyVPC
+      InternetGatewayId: !Ref MyInternetGateway
+
+  MyPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: "10.0.1.0/24"
+      VpcId: !Ref MyVPC
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      Tags:
+        - Key: Name
+          Value: "My Public Subnet"
+
+  MyRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: "My Route Table"
+
+  MyDefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: MyVPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref MyRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref MyInternetGateway
+
+  MySubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref MyPublicSubnet
+      RouteTableId: !Ref MyRouteTable
+
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "My Security Group"
+      GroupDescription: "My security group"
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 5000
+          ToPort: 5000
+          CidrIp: 0.0.0.0/0
+
+  MyInstance:
+    Type: AWS::EC2::Instance
+    DeletionPolicy: Retain
+    Properties:
+      InstanceType: g4dn.xlarge
+      ImageId: ami-0650332016f0340e6
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 100
+            VolumeType: gp3
+      "Tags" : [
+            {"Key" : "Name", "Value" : "sd-web-ui-cf"},
+        ]
+      KeyName: diffusion
+      # SecurityGroupIds:
+      #   - !Ref MySecurityGroup
+      # SubnetId: !Ref MyPublicSubnet
+      NetworkInterfaces:
+        - DeviceIndex: 0
+          AssociatePublicIpAddress: true
+          SubnetId: !Ref MyPublicSubnet
+          GroupSet:
+            - !Ref MySecurityGroup
+      UserData:
+        'Fn::Base64': |
+            #!/bin/bash
+            sudo apt update -y
+            sudo apt upgrade -y
+            sudo apt install nvidia-driver-525 -y
+            pip install --upgrade git+https://github.com/huggingface/diffusers.git transformers accelerate scipy
+            pip install flask-cors
+  MyEIP:
+    Type: AWS::EC2::EIP
+
+  MyEIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      InstanceId: !Ref MyInstance
+      EIP: !Ref MyEIP
+
+Outputs:
+  ElasticIP:
+    Description: The Elastic IP address
+    Value: !Ref MyEIP
+    Export:
+      Name: MyElasticIP
+  # MyVolume:
+  #   Type: AWS::EC2::Volume
+  #   Properties:
+  #     Size: 1
+  #     AvailabilityZone: !Select [0, !GetAZs ""]
+  #     Tags:
+  #     - Key: Name
+  #       Value: "My Volume"
+
+  # MyVolumeAttachment:
+  #   Type: AWS::EC2::VolumeAttachment
+  #   Properties:
+  #     InstanceId: !Ref MyInstance
+  #     VolumeId: !Ref MyVolume
+  #     Device: /dev/xvdf
+          
+# Parameters:
+#   KeyParameter:
+#     Type: String
+#     Description: The value of the 'key' environment variable
+#     Default: default_value

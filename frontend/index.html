@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paint AI</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='assets/css/index.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container mt-3">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <p id="txt2img" class="nav-link active" aria-current="page">
+            Text-to-Image
+          </p>
+        </li>
+        <li class="nav-item">
+          <p id="img2img" class="nav-link">Image-to-Image</p>
+        </li>
+      </ul>
+
+      <div class="row mt-4 gx-2">
+        <div class="col">
+          <textarea
+            id="text-input"
+            class="form-control textarea"
+            placeholder="Enter your idea here!!!"
+            rows="2"
+          ></textarea>
+        </div>
+        <div class="col-auto">
+          <button
+            id="btn-submit"
+            type="button"
+            class="btn h-100"
+            style="width: 300px"
+          >
+            Generate
+          </button>
+        </div>
+      </div>
+      <div class="image-resizer row my-4 mx-auto p-4 border rounded">
+        <div class="input__container row my-2 mx-auto p-4 border rounded">
+          <label for="input__height">Height</label>
+          <span class="input__height--value">512</span>
+          <input
+            type="range"
+            id="input-height"
+            name="input__height"
+            value="512"
+            step="8"
+            min="512"
+            max="1024"
+          />
+        </div>
+        <div class="input__container row my-2 mx-auto p-4 border rounded">
+          <label for="input__width">Width</label>
+          <span class="input__width--value">512</span>
+          <input
+            type="range"
+            id="input-width"
+            name="input__width"
+            value="512"
+            step="8"
+            min="512"
+            max="1024"
+          />
+        </div>
+      </div>
+      <textarea
+        id="url-input"
+        class="form-control url-textarea mt-4 d-none"
+        placeholder="Enter the URL of the image here!!!"
+        rows="3"
+      ></textarea>
+      <div class="container text-center mt-5">
+        <h2>Image Generation</h2>
+        <div class="image-loading d-none mt-5 text-center">
+          <div class="spinner-border" role="status"></div>
+          <p class="sr-only mt-2">Loading...</p>
+        </div>
+
+        <img
+          id="image-generated"
+          class="mt-2 rounded shadow-lg"
+          src=""
+          alt=""
+        />
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='script/index.js') }}"></script>
+  </body>
+</html>

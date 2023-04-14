@@ -1,0 +1,60 @@
+.nav-link {
+    user-select: none;
+}
+.nav-link:not(.active) {
+    color: black;
+}
+.nav-link:hover {
+    cursor: pointer;
+}
+.btn {
+    background-color: #FBAB7E;
+    background-image: linear-gradient(62deg, #F7CE68 0%, #FBAB7E 100%);
+    border: none;
+}
+.btn:focus {
+    box-shadow: none;
+    border: unset;
+}
+img {
+    width: 50vw;
+}
+.input__container {
+    position: relative;
+}
+.input__container > label {
+    width: fit-content;
+    background: white;
+    padding: 2px;
+    position: absolute;
+    top: -15px
+}
+.input__container > input {
+    padding: 0;
+}
+
+.input__container::before,
+.input__container::after {
+    display: inline;
+    position: absolute;
+    bottom: 0px;
+}
+
+.input__container::before {
+    content: "512";
+    left: 1.5rem;
+}
+.input__container::after {
+    content: "1024";
+    right: 20px;
+}
+.input__width--value,
+.input__height--value {
+    position: absolute;
+    width: fit-content;
+    padding: 0;
+    top: 2px;
+}
+textarea {
+    resize: none;
+}
