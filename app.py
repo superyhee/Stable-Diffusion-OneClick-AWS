@@ -32,7 +32,7 @@ def text_to_img():
         model_id, scheduler=scheduler, revision="fp16", torch_dtype=torch.float16
     )
     pipe = pipe.to("cuda")
-    image = pipe(data["prompt"], height=data["height"], width=data["width"]).images[0]
+    image = pipe(data["prompt"], guidance_scale=7.5, num_inference_steps=20,height=data["height"], width=data["width"]).images[0]
 
     image.save(output)
     return send_file(output), 200

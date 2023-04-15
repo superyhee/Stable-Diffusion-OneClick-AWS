@@ -73,16 +73,16 @@ Resources:
     DeletionPolicy: Retain
     Properties:
       InstanceType: g4dn.xlarge
-      ImageId: ami-0650332016f0340e6
+      ImageId: !Ref InstanceAMI
       BlockDeviceMappings:
         - DeviceName: /dev/sda1
           Ebs:
             VolumeSize: 100
             VolumeType: gp3
       "Tags" : [
-            {"Key" : "Name", "Value" : "sd-one-clic"},
+            {"Key" : "Name", "Value" : "stablediffusion-onclick"},
         ]
-      KeyName: diffusion
+      KeyName: !Ref KeyPairName
       # SecurityGroupIds:
       #   - !Ref MySecurityGroup
       # SubnetId: !Ref MyPublicSubnet
@@ -98,10 +98,18 @@ Resources:
             sudo apt update -y
             sudo apt upgrade -y
             sudo apt install nvidia-driver-525 -y
+            sudo apt install python3-pip -y
             pip install --upgrade git+https://github.com/huggingface/diffusers.git transformers accelerate scipy safetensors xformers
             pip install flask-cors
             cd /home/ubuntu/
             git clone https://github.com/superyhee/Stable-Diffusion-OneClick-AWS.git
+            wget https://civitai.com/api/download/models/14856 -O ./Stable-Diffusion-OneClick-AWS/moxin.safetensors
+            sudo chown  ubuntu Stable-Diffusion-OneClick-AWS
+            chmod u+w Stable-Diffusion-OneClick-AWS
+            sudo chown -R ubuntu Stable-Diffusion-OneClick-AWS/*
+            chmod u+w Stable-Diffusion-OneClick-AWS/*
+            echo "------Stable Diffusion Install Finished ------"
+            sudo reboot
   MyEIP:
     Type: AWS::EC2::EIP
 
@@ -131,8 +139,15 @@ Outputs:
   #   Properties:
   #     InstanceId: !Ref MyInstance
   #     VolumeId: !Ref MyVolume
-  #     Device: /dev/xvdf
-          
+  #     Device: /dev/xvdf 
+
+Parameters:
+  InstanceAMI:
+    Type: AWS::EC2::Image::Id
+    Description: ID of the AMI to use for the EC2 instance 
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of the SSH key pair to use for the EC2 instance   
 # Parameters:
 #   KeyParameter:
 #     Type: String
