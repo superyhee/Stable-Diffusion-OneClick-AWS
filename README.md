@@ -79,18 +79,18 @@
 * 通过命令行运行AWS CloudFormation模板，安装和配置AWS CLI，请按照[AWS CLI官方文档](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)进行安装和配置。
 
 * 通过console界面找到ami id：
+
 ![图 7](images/6461e8e52ed7ff48cde0dd3f63e4b0f1372a8dce7b437a46b3a60f987b33b738.png)  
 
 * 通过AWS Console界面安装和运行项目：
+
 ![图 4](images/187e37636904a0400935191e4baa7a26ec311bc0a2e2a684edceb1d0fd3b1021.png)  
 
 安装完毕后界面输出访问的IP地址
 ![图 3](images/7b8f5c5f295b625c793954a51b2c6d7cbd33c1ce690b1fe5e94bb2e9e16d5d22.png)  
 
-
 也可以使用以下命令创建一个名为MyStack的新堆栈：
-
-  
+ 
 
 bash
 
@@ -131,20 +131,21 @@ aws cloudformation delete-stack --stack-name MyStack
 * 通过ssh连接EC2,tail -f /var/log/cloud-init-output.log查看安装进度
 
 * 通过ssh连接EC2，运行nvidia-smi,出现nvidia 的系统管理界面
+  
 ![图 8](images/2d0c7cd9c5c7f6b21bc385deb031dcdce85a11622284b7d21ae362942666008d.png)  
 
 
 * 进入Stable-Diffusion-OneClick-AWS，运行python3 app.py
 
 * 访问输出的地址http://public_ip/5000，可以看见UI界面
+  
  ![图 6](images/09b1862bbc5ae39b982832b2d64a0c4ad4a6076384723f838b4a7d99d590ee08.png)  
 
 
 * 进入Stable-Diffusion-OneClick-AWS，运行python3 lora.py,会加载lora使用wenxin模型生成水墨画风图片
+  
  ![图 5](images/4c3dda09daf59c01383692a85c24bc4cd04019f9e545c43b0f0210167aafdd15.png)  
 
-
-[Image: ./docs/images/ui.png]可以进入python环境直接运行测试环境：
 
   
 
