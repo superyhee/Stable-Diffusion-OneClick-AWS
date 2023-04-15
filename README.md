@@ -76,8 +76,6 @@
 * 通过AWS Console创建命EC2 keypair
 ![图 9](images/d50067864eebeb7eb11c41f75d6bbadef79d9e94ca0e9e6a4c2ad7610d25dcb7.png)  
 
-* 通过命令行运行AWS CloudFormation模板，安装和配置AWS CLI，请按照[AWS CLI官方文档](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)进行安装和配置。
-
 * 通过console界面找到ami id：
 
 ![图 7](images/6461e8e52ed7ff48cde0dd3f63e4b0f1372a8dce7b437a46b3a60f987b33b738.png)  
@@ -89,7 +87,7 @@
 安装完毕后界面输出访问的IP地址
 ![图 3](images/7b8f5c5f295b625c793954a51b2c6d7cbd33c1ce690b1fe5e94bb2e9e16d5d22.png)  
 
-也可以使用以下命令创建一个名为MyStack的新堆栈：
+也可以使用以下命令创建一个名为MyStack的新堆栈,通过命令行运行AWS CloudFormation模板，安装和配置AWS CLI，请按照[AWS CLI官方文档](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)进行安装和配置。：
  
 
 bash
