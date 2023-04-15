@@ -52,7 +52,7 @@
 
 * MyInstance：创建一个EC2实例，具有以下属性：
 
-* 实例类型：`g4dn.xlarge`
+* 实例类型：默认`g4dn.xlarge`，可以按需选择g4dn.2xlarge，g4dn.4xlarge，g4dn.8xlarge，g4dn.12xlarge，g4dn.16xlarge
 
 * 镜像ID：选择 Ubuntu Server 22.04的镜像ID
 
@@ -74,20 +74,23 @@
   
 
 * 通过AWS Console创建命EC2 keypair
-![图 9](images/d50067864eebeb7eb11c41f75d6bbadef79d9e94ca0e9e6a4c2ad7610d25dcb7.png)  
+
+  ![图 9](images/d50067864eebeb7eb11c41f75d6bbadef79d9e94ca0e9e6a4c2ad7610d25dcb7.png)  
 
 * 通过console界面找到ami id：
 
-![图 7](images/6461e8e52ed7ff48cde0dd3f63e4b0f1372a8dce7b437a46b3a60f987b33b738.png)  
+  ![图 7](images/6461e8e52ed7ff48cde0dd3f63e4b0f1372a8dce7b437a46b3a60f987b33b738.png)  
 
 * 通过AWS Console界面安装和运行项目：
 
-![图 4](images/187e37636904a0400935191e4baa7a26ec311bc0a2e2a684edceb1d0fd3b1021.png)  
+  ![图 10](images/5e89370fcb8d3a1ae101605563349e1d3bed6a6585e2d862d97df99a4a86aee2.png)  
 
-安装完毕后界面输出访问的IP地址
-![图 3](images/7b8f5c5f295b625c793954a51b2c6d7cbd33c1ce690b1fe5e94bb2e9e16d5d22.png)  
 
-也可以使用以下命令创建一个名为MyStack的新堆栈,通过命令行运行AWS CloudFormation模板，安装和配置AWS CLI，请按照[AWS CLI官方文档](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)进行安装和配置。：
+* 安装完毕后界面输出访问的IP地址:
+
+  ![图 3](images/7b8f5c5f295b625c793954a51b2c6d7cbd33c1ce690b1fe5e94bb2e9e16d5d22.png)  
+
+* 也可以使用以下命令创建一个名为MyStack的新堆栈,通过命令行运行AWS CloudFormation模板，安装和配置AWS CLI，请按照[AWS CLI官方文档](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)进行安装和配置。：
  
 
 bash
@@ -130,19 +133,20 @@ aws cloudformation delete-stack --stack-name MyStack
 
 * 通过ssh连接EC2，运行nvidia-smi,出现nvidia 的系统管理界面
   
-![图 8](images/2d0c7cd9c5c7f6b21bc385deb031dcdce85a11622284b7d21ae362942666008d.png)  
+  ![图 8](images/2d0c7cd9c5c7f6b21bc385deb031dcdce85a11622284b7d21ae362942666008d.png)  
 
 
 * 进入Stable-Diffusion-OneClick-AWS，运行python3 app.py
 
 * 访问输出的地址http://public_ip/5000，可以看见UI界面
   
- ![图 6](images/09b1862bbc5ae39b982832b2d64a0c4ad4a6076384723f838b4a7d99d590ee08.png)  
+  ![图 6](images/09b1862bbc5ae39b982832b2d64a0c4ad4a6076384723f838b4a7d99d590ee08.png)  
+
 
 
 * 进入Stable-Diffusion-OneClick-AWS，运行python3 lora.py,会加载lora使用wenxin模型生成水墨画风图片
   
- ![图 5](images/4c3dda09daf59c01383692a85c24bc4cd04019f9e545c43b0f0210167aafdd15.png)  
+  ![图 5](images/4c3dda09daf59c01383692a85c24bc4cd04019f9e545c43b0f0210167aafdd15.png)  
 
 
   

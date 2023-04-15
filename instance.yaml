@@ -72,7 +72,7 @@ Resources:
     Type: AWS::EC2::Instance
     DeletionPolicy: Retain
     Properties:
-      InstanceType: g4dn.xlarge
+      InstanceType: !Ref InstanceType
       ImageId: !Ref InstanceAMI
       BlockDeviceMappings:
         - DeviceName: /dev/sda1
@@ -148,8 +148,14 @@ Parameters:
   KeyPairName:
     Type: AWS::EC2::KeyPair::KeyName
     Description: Name of the SSH key pair to use for the EC2 instance   
-# Parameters:
-#   KeyParameter:
-#     Type: String
-#     Description: The value of the 'key' environment variable
-#     Default: default_value
+  InstanceType:
+    Type: String
+    Description: EC2 instance type
+    Default: g4dn.xlarge
+    AllowedValues:
+      - g4dn.xlarge
+      - g4dn.2xlarge
+      - g4dn.4xlarge
+      - g4dn.8xlarge
+      - g4dn.12xlarge
+      - g4dn.16xlarge
