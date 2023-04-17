@@ -109,6 +109,24 @@ Resources:
             sudo chown -R ubuntu Stable-Diffusion-OneClick-AWS/*
             chmod u+w Stable-Diffusion-OneClick-AWS/*
             echo "------Stable Diffusion Install Finished ------"
+            # Create systemd service
+            sudo tee /etc/systemd/system/myapp.service > /dev/null <<EOF
+            [Unit]
+            Description=Diffusion Service
+            After=network.target
+            [Service]
+            User=ubuntu
+            ExecStart=/usr/bin/python3 /home/ubuntu/Stable-Diffusion-OneClick-AWS/app.py
+            WorkingDirectory=/home/ubuntu/Stable-Diffusion-OneClick-AWS
+            Restart=always
+            [Install]
+            WantedBy=multi-user.target
+            EOF
+            # Reload systemd and enable service
+            sudo systemctl daemon-reload
+            sudo systemctl enable myapp.service
+            # Start the service
+            sudo systemctl start myapp.service
             sudo reboot
   MyEIP:
     Type: AWS::EC2::EIP

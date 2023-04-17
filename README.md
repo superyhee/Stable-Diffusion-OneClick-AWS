@@ -148,25 +148,6 @@ aws cloudformation delete-stack --stack-name MyStack
   
   ![图 5](images/4c3dda09daf59c01383692a85c24bc4cd04019f9e545c43b0f0210167aafdd15.png)  
 
-
-  
-
-```
-
-`
-
-from diffusers import DiffusionPipeline`
-
-`pipeline = DiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5")`
-
-`pipeline.to("cuda")`
-
-`image = pipeline("A cute cat playing piano").images[0]`
-
-`image.save("image_of_cat_playing_piano.png")`
-
-```
-
   
 
 **样例程序说明：**
