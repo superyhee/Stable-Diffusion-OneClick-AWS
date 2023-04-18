@@ -136,7 +136,7 @@ aws cloudformation delete-stack --stack-name MyStack
   ![图 8](images/2d0c7cd9c5c7f6b21bc385deb031dcdce85a11622284b7d21ae362942666008d.png)  
 
 
-* 进入Stable-Diffusion-OneClick-AWS，运行python3 app.py
+* 进入Stable-Diffusion-OneClick-AWS，默认已经启动了python3 app.py服务，可以通过sudo systemctl stop myapp.service 停止服务。
 
 * 访问输出的地址http://public_ip/5000，可以看见UI界面
   
@@ -144,7 +144,7 @@ aws cloudformation delete-stack --stack-name MyStack
 
 
 
-* 进入Stable-Diffusion-OneClick-AWS，运行python3 lora.py,会加载lora使用wenxin模型生成水墨画风图片
+* 进入Stable-Diffusion-OneClick-AWS，先停止后台服务sudo systemctl start myapp.service；再运行python3 lora.py,会加载lora使用moxin模型生成水墨画风图片
   
   ![图 5](images/4c3dda09daf59c01383692a85c24bc4cd04019f9e545c43b0f0210167aafdd15.png)  
 
