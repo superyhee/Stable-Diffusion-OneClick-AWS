@@ -24,12 +24,17 @@ def health_check():
 @app.post("/txt2img")
 def text_to_img():
     data = request.json
+    #model_id = "andite/anything-v4.0" # 默认的，高品质、高细节的动漫风格
+    #model_id = 'Envvi/Inkpunk-Diffusion' # 温克朋克风格，提示词 nvinkpunk
+    #model_id = 'nousr/robo-diffusion-2-base' # 看起来很酷的机器人，提示词 nousr robot
+    #model_id = 'prompthero/openjourney' # openjorney 风格,提示词 mdjrny-v4 style
+    #model_id = 'dreamlike-art/dreamlike-photoreal-2.0' #写实，真实风格，提示词 photo
     model_id = "stabilityai/stable-diffusion-2"
     output = "output_txt2img.png"
 
     scheduler = EulerDiscreteScheduler.from_pretrained(model_id, subfolder="scheduler")
     pipe = StableDiffusionPipeline.from_pretrained(
-        model_id, scheduler=scheduler, revision="fp16", torch_dtype=torch.float16
+        model_id, scheduler=scheduler, torch_dtype=torch.float16
     )
     pipe = pipe.to("cuda")
     image = pipe(data["prompt"], guidance_scale=7.5, num_inference_steps=20,height=data["height"], width=data["width"]).images[0]
