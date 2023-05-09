@@ -1,0 +1,266 @@
+Resources:
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      Tags:
+        - Key: Name
+          Value: "My VPC"
+
+  MyInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: "My IGW"
+
+  MyVPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref MyVPC
+      InternetGatewayId: !Ref MyInternetGateway
+
+  MyPublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: "10.0.1.0/24"
+      VpcId: !Ref MyVPC
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      Tags:
+        - Key: Name
+          Value: "My Public Subnet 1"
+
+  MyPublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: "10.0.2.0/24"
+      VpcId: !Ref MyVPC
+      AvailabilityZone: !Select [1, !GetAZs ""]
+      Tags:
+        - Key: Name
+          Value: "My Public Subnet 2"
+
+  MyRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: "My Route Table"
+
+  MyDefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: MyVPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref MyRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref MyInternetGateway
+
+  MySubnetRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref MyPublicSubnet1
+      RouteTableId: !Ref MyRouteTable
+
+  MySubnetRouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref MyPublicSubnet2
+      RouteTableId: !Ref MyRouteTable
+    
+  MyALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "My ALB Security Group"
+      GroupDescription: "Security group for the Application Load Balancer"
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "My Security Group"
+      GroupDescription: "My security group"
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 5000
+          ToPort: 5000
+          SourceSecurityGroupId: !GetAtt MyALBSecurityGroup.GroupId
+
+  # MyLaunchConfiguration:
+  #   Type: AWS::AutoScaling::LaunchConfiguration
+  #   Properties:
+  #     InstanceType: !Ref InstanceType
+  #     ImageId: !Ref InstanceAMI
+  #     SecurityGroups:
+  #       - !Ref MySecurityGroup
+  #     KeyName: !Ref KeyPairName
+  #     AssociatePublicIpAddress: true
+  #     BlockDeviceMappings:
+  #       - DeviceName: /dev/sda1
+  #         Ebs:
+  #           VolumeSize: 100
+  #           VolumeType: gp3
+  #     UserData:
+  #       'Fn::Base64': |
+  #           #!/bin/bash
+  #           sudo apt update -y
+  #           sudo apt upgrade -y
+  #           sudo apt install nvidia-driver-525 -y
+  #           sudo apt install python3-pip -y
+  #           pip install --upgrade git+https://github.com/huggingface/diffusers.git transformers accelerate scipy safetensors xformers
+  #           pip install flask-cors
+  #           cd /home/ubuntu/
+  #           git clone https://github.com/superyhee/Stable-Diffusion-OneClick-AWS.git
+  #           wget https://civitai.com/api/download/models/14856 -O ./Stable-Diffusion-OneClick-AWS/moxin.safetensors
+  #           sudo chown  ubuntu Stable-Diffusion-OneClick-AWS
+  #           chmod u+w Stable-Diffusion-OneClick-AWS
+  #           sudo chown -R ubuntu Stable-Diffusion-OneClick-AWS/*
+  #           chmod u+w Stable-Diffusion-OneClick-AWS/*
+  #           echo "------Stable Diffusion Install Finished ------"
+  #           sudo reboot
+
+  MyLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: MyALB
+      SecurityGroups:
+        - !Ref MyALBSecurityGroup
+      Type: application
+      Subnets:
+        - !Ref MyPublicSubnet1
+        - !Ref MyPublicSubnet2
+
+  MyTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: MyTargetGroup
+      Port: 5000
+      Protocol: HTTP
+      VpcId: !Ref MyVPC
+      HealthCheckEnabled: true
+      HealthCheckPath: /health
+      HealthCheckProtocol: HTTP
+      Matcher:
+        HttpCode: '200'
+
+
+  MyListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref MyLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref MyTargetGroup
+
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: MyLaunchTemplate
+      LaunchTemplateData:
+        InstanceType: !Ref InstanceType
+        ImageId: !Ref InstanceAMI
+        KeyName: !Ref KeyPairName
+        NetworkInterfaces:
+          - DeviceIndex: 0
+            AssociatePublicIpAddress: true
+            Groups:
+              - !Ref MySecurityGroup
+        BlockDeviceMappings:
+          - DeviceName: /dev/sda1
+            Ebs:
+             VolumeSize: 100
+             VolumeType: gp3
+        UserData:
+          'Fn::Base64': |
+              #!/bin/bash
+              sudo apt update -y
+              sudo apt upgrade -y
+              sudo apt install nvidia-driver-525 -y
+              sudo apt install python3-pip -y
+              pip install --upgrade git+https://github.com/huggingface/diffusers.git transformers accelerate scipy safetensors xformers bitsandbytes torch
+              pip install flask-cors
+              cd /home/ubuntu/
+              git clone https://github.com/superyhee/Stable-Diffusion-OneClick-AWS.git
+              wget https://civitai.com/api/download/models/14856 -O ./Stable-Diffusion-OneClick-AWS/moxin.safetensors
+              sudo chown  ubuntu Stable-Diffusion-OneClick-AWS
+              chmod u+w Stable-Diffusion-OneClick-AWS
+              sudo chown -R ubuntu Stable-Diffusion-OneClick-AWS/*
+              chmod u+w Stable-Diffusion-OneClick-AWS/*
+              echo "------Stable Diffusion Install Finished ------"
+              # Create systemd service
+              sudo tee /etc/systemd/system/myapp.service > /dev/null <<EOF
+              [Unit]
+              Description=Diffusion Service
+              After=network.target
+              [Service]
+              User=ubuntu
+              ExecStart=/usr/bin/python3 /home/ubuntu/Stable-Diffusion-OneClick-AWS/app.py
+              WorkingDirectory=/home/ubuntu/Stable-Diffusion-OneClick-AWS
+              Restart=always
+              [Install]
+              WantedBy=multi-user.target
+              EOF
+              # Reload systemd and enable service
+              sudo systemctl daemon-reload
+              sudo systemctl enable myapp.service
+              # Start the service
+              sudo systemctl start myapp.service
+              sudo reboot
+  MyAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      MinSize: 0
+      MaxSize: 1
+      DesiredCapacity: 1
+      VPCZoneIdentifier:
+        - !Ref MyPublicSubnet1
+        - !Ref MyPublicSubnet2
+      TargetGroupARNs:
+        - !Ref MyTargetGroup
+      MixedInstancesPolicy:
+        InstancesDistribution:
+          OnDemandBaseCapacity: 1
+          OnDemandPercentageAboveBaseCapacity: 0
+          SpotAllocationStrategy: capacity-optimized
+        LaunchTemplate:
+          LaunchTemplateSpecification:
+            LaunchTemplateId: !Ref MyLaunchTemplate
+            Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+          Overrides:
+            - InstanceType: g5.xlarge
+            - InstanceType: g5.2xlarge
+
+Parameters:
+  InstanceAMI:
+    Type: AWS::EC2::Image::Id
+    Description: ID of the AMI to use for the EC2 instance 
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of the SSH key pair to use for the EC2 instance   
+  InstanceType:
+    Type: String
+    Description: EC2 instance type
+    Default: g5.2xlarge
+    AllowedValues:
+      - g4dn.xlarge
+      - g4dn.2xlarge
+      - g4dn.4xlarge
+      - g4dn.8xlarge
+      - g4dn.12xlarge
+      - g4dn.16xlarge
+      - g5.xlarge
+      - g5.2xlarge
+      - g5.4xlarge
+      - g5.8xlarge

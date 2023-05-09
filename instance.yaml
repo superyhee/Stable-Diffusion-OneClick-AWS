@@ -99,8 +99,7 @@ Resources:
             sudo apt upgrade -y
             sudo apt install nvidia-driver-525 -y
             sudo apt install python3-pip -y
-            pip install accelerate bitsandbytes torch transformers
-            pip install --upgrade git+https://github.com/huggingface/diffusers.git transformers accelerate scipy safetensors xformers
+            pip install --upgrade git+https://github.com/huggingface/diffusers.git transformers accelerate scipy safetensors xformers bitsandbytes torch
             pip install flask-cors
             cd /home/ubuntu/
             git clone https://github.com/superyhee/Stable-Diffusion-OneClick-AWS.git
