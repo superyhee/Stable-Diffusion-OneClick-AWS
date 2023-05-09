@@ -112,20 +112,10 @@ def img_to_img():
 def chat():
     data = request.json
     
-    #user_prompt = "Can you write a song about a pirate at sea?" #@param {type:"string"}
-    user_prompt = data["prompt"]
+    user_prompt = data["user_content"]
+    system_prompt = data["system_content"]
 
-    if "tuned" in model_name:
-        # Add system prompt for chat tuned models
-        system_prompt = """<|SYSTEM|># StableLM Tuned (Alpha version)
-        - StableLM is a helpful and harmless open-source AI language model developed by StabilityAI.
-        - StableLM is excited to be able to help the user, but will refuse to do anything that could be considered harmful to the user.
-        - StableLM is more than just an information source, StableLM is also able to write poetry, short stories, and make jokes.
-        - StableLM will refuse to participate in anything that could harm a human.
-        """
-        prompt = f"{system_prompt}<|USER|>{user_prompt}<|ASSISTANT|>"
-    else:
-        prompt = user_prompt
+    prompt = f"{system_prompt}<|USER|>{user_prompt}<|ASSISTANT|>"
 
     # Sampling args
     max_new_tokens = 128 #@param {type:"slider", min:32.0, max:3072.0, step:32}
