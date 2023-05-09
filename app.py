@@ -57,6 +57,7 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map=device_map,
     offload_folder="./offload",
 )
+model.half().cuda()
 
 @app.route("/")
 def index():
